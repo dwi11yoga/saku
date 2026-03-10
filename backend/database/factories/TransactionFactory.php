@@ -23,6 +23,7 @@ class TransactionFactory extends Factory
             'category_id' => fake()->numberBetween(1, 3),
             'date' => $date,
             'amount' => fake()->numberBetween(5000, 100000),
+            'direction' => fake()->randomElement(['in', 'out']),
             'note' => fake()->sentence(10),
             'created_at' => $date,
             'updated_at' => $date,

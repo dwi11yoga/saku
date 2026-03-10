@@ -1,12 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-custom-light: #F9F5F0;
-  --color-custom-green: #344F1F;
-  --color-custom-yellow:#F4991A;
-  --color-custom-red:#D96868;
+  --color-custom-light: #f9f5f0;
+  --color-custom-green: #344f1f;
+  --color-custom-yellow: #f4991a;
+  --color-custom-red: #d96868;
 }
 
-body{
-    background-color: var(--color-custom-light);
+body {
+  background-color: var(--color-custom-light);
+  font-family: "Google Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }

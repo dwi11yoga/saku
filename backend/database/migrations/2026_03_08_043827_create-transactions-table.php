@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('wallet_id');
             $table->foreignId('category_id');
+            $table->string('direction')->default('out'); // in=debit, out=credit
             $table->bigInteger('amount')->default(0);
             $table->dateTime('date');
             $table->string('note')->nullable();
