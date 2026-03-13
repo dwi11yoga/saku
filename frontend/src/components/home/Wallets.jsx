@@ -23,23 +23,22 @@ export default function Wallets() {
           var hover;
           switch (wallet.color) {
             case "yellow":
-              background = "bg-custom-yellow";
+              background = "bg-custom-yellow/10";
               hover = "hover:bg-custom-yellow/20";
               break;
             case "red":
-              background = "bg-custom-red";
+              background = "bg-custom-red/10";
               hover = "hover:bg-custom-red/20";
               break;
             default:
-              background = "bg-custom-green";
+              background = "bg-custom-green/10";
               hover = "hover:bg-custom-green/20";
               break;
           }
           return (
-            <Link
+            <Link key={wallet.id}
               to={"/"}
-              className={`flex ${wallets.length > 1 ? "aspect-square w-1/2" : "w-full"} flex-col justify-between rounded-xl p-5 ${background}/10 hover:
-            ${hover}`}
+              className={`flex ${wallets.length > 1 ? "aspect-square w-1/2" : "w-full"} flex-col justify-between rounded-xl p-5 ${background} ${hover}`}
             >
               <div className="text-5xl">{wallet.icon}</div>
               <div className="">

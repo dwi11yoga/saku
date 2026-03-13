@@ -28,18 +28,21 @@ class TransactionController extends Controller
             $data = $data->limit($request->limit);
         }
 
-        $data = $data->get();
-
-        // proses data uang dan tanggal
-        // $data = $data->map(function ($d) {
-        //     $d->date = $d->date->translatedFormat('j F Y');
-        //     return $d;
-        // });
-        foreach ($data as &$d) {
-            $d->date = $d->date->translatedFormat('j F Y');
+        // jika di beri filter bulan
+        if ($request->has('month') && $request->has('year')) {
+            $data = $data->whereMonth('date', $request->month)
+                ->whereYear('date', $request->year);
         }
 
-        // dd($data);
+        // dapatkan data
+        $data = $data->get();
+
+        // jika di groupby
+        if ($request->has('groupby')) {
+            $data = $data->groupBy(function ($transaction) {
+                return $transaction->date->format('Y-m-d');
+            });
+        }
 
         return $data;
     }

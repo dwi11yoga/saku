@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { dateFormat, moneyFormat } from "../../utils/format";
 import axios from "axios";
 import * as LucideIcons from "lucide-react";
+import TransactionItem from "../TransactionItem";
 
 export default function LatestTransaction() {
   const [transactions, setTransactions] = useState([]);
@@ -24,23 +25,18 @@ export default function LatestTransaction() {
 
       <div className="space-y-1">
         {transactions.map((transaction) => {
-          const Icon = LucideIcons[transaction.category.icon];
+          const date = dateFormat(transaction.date);
+          const amount = moneyFormat(transaction.amount);
+          const direction = transaction.direction == "in" ? "+" : "-";
           return (
-            <div
+            <TransactionItem
               key={transaction.id}
-              className="flex justify-between items-center border border-custom-green/10 rounded-xl p-5"
-            >
-              <div className="flex items-center gap-3">
-                <Icon />
-                <div className="">
-                  <div className="">{transaction.category.name}</div>
-                  <div className="text-neutral-600 text-sm">
-                    {dateFormat(transaction.date)}
-                  </div>
-                </div>
-              </div>
-              <div className="text-lg">{moneyFormat(transaction.amount, true)}</div>
-            </div>
+              id={transaction.id}
+              name={transaction.category.name}
+              desc={date}
+              amount={`IDR ${direction}${amount}`}
+              icon={transaction.category.icon}
+            />
           );
         })}
       </div>

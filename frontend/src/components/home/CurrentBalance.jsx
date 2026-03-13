@@ -41,7 +41,7 @@ export default function CurrentBalance() {
           >
             {moneyFormat(Math.abs(growth))}
           </span>{" "}
-          dibanding bulan sebelumnya.
+          dibanding minggu sebelumnya.
         </div>
       </div>
     </div>
