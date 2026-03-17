@@ -65,7 +65,7 @@ export default function Nav() {
             className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
           >
             <Tags width={20} height={20} />
-            {expanded && <div>Kategori</div>}
+            {expanded && <div>Kantong & kategori</div>}
           </Link>
           <Link
             to={"/pengaturan"}

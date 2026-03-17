@@ -44,6 +44,6 @@ class WalletController extends Controller
     // dapatkan data wallet
     public function getWallet()
     {
-        return Wallet::where('user_id', 1)->get();
+        return Wallet::where('user_id', 1)->latest()->get();
     }
 }

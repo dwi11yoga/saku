@@ -13,8 +13,7 @@ export default function DashboardLayout({ children, title }) {
       <Nav />
 
       <div className="w-full">
-        {/* content */}
-        <main className="w-full mt-3 space-y-3 min-h-screen">
+        <main className="w-full mt-3 space-y-3 min-h-[85vh]">
           {/* bagian atas */}
           <div className="flex justify-between items-center">
             {/* sapaan */}
