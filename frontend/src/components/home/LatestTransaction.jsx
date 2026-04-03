@@ -36,6 +36,7 @@ export default function LatestTransaction() {
               desc={date}
               amount={`IDR ${direction}${amount}`}
               icon={transaction.category.icon}
+              transactionDirection={transaction.direction}
             />
           );
         })}

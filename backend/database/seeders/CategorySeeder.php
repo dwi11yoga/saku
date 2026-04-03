@@ -17,17 +17,17 @@ class CategorySeeder extends Seeder
             [
                 'user_id' => 1,
                 'name' => 'Kuota & data',
-                'icon' => 'Smartphone',
+                'icon' => '📱',
             ],
             [
                 'user_id' => 1,
                 'name' => 'Jajan',
-                'icon' => 'Utensils',
+                'icon' => '🍟',
             ],
             [
                 'user_id' => 1,
                 'name' => 'Bensin',
-                'icon' => 'Fuel',
+                'icon' => '⛽️',
             ],
         ]);
     }

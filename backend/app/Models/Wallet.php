@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Wallet extends Model
@@ -20,5 +21,14 @@ class Wallet extends Model
         'credit',
         'note'
     ];
-    //
+
+    /**
+     * Get all of the transaction for the Wallet
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function transaction(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

@@ -14,13 +14,21 @@ Route::get('/user', function (Request $request) {
 Route::get('/transactions', [TransactionController::class, 'transactionList']);
 // cashflow
 Route::get('/cashflow', [TransactionController::class, 'cashflow']);
+// detail transaksi
+Route::get('/transaction/{id}', [TransactionController::class, 'transactionDetail']);
 
 // balance saat ini
 Route::get('/current-balance', [WalletController::class, 'currentBalance']);
 // daftar wallet
-Route::get('/wallets', [WalletController::class, 'getWallet']);
+Route::get('/wallets', [WalletController::class, 'getAllWallet']);
 
 // daftar kategori
 Route::get('/categories', [CategoryController::class, 'getCategories']);
+// tambah kategori
+Route::post('/categories', [CategoryController::class, 'create']);
 // detail kategori
 Route::get('/categories/{id}', [CategoryController::class, 'categoryDetail']);
+// tambah kantong
+Route::post('/wallet', [WalletController::class, 'create']);
+// detail kantong
+Route::get('/wallet/{id}', [WalletController::class, 'walletDetail']);

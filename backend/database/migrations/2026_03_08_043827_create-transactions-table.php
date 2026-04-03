@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('direction')->default('out'); // in=debit, out=credit
             $table->bigInteger('amount')->default(0);
             $table->dateTime('date');
+            $table->string('location')->nullable();
             $table->string('note')->nullable();
             $table->datetimes();
             $table->softDeletes();

@@ -8,9 +8,11 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  CircleX,
 } from "lucide-react";
 import { dateFormat, moneyFormat, transactionDirection } from "../utils/format";
 import Skeleton from "../components/Skeleton";
+import ErrorPage from "./ErrorPage";
 
 export default function Transaction() {
   // search param
@@ -25,6 +27,7 @@ export default function Transaction() {
   // data
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [failLoadData, setFailLoadData] = useState(false);
 
   useEffect(() => {
     axios
@@ -40,10 +43,29 @@ export default function Transaction() {
         setSearchParam({ month, year });
         // set data transaksi
         setTransactions(res.data);
+      })
+      .catch((err) => {
+        setFailLoadData({
+          status: err.response?.status,
+          message: err.response?.data.message,
+        });
+      })
+      .finally(() => {
         // ubah status loading
         setLoading(false);
       });
   }, [month, year]);
+
+  // jika tidak berhasil mengambil data dari db..
+  if (failLoadData) {
+    return (
+      <ErrorPage
+        title={"Transaksi"}
+        status={failLoadData.status}
+        message={failLoadData.message}
+      />
+    );
+  }
 
   // ubah bulan
   function changeMonth(operation) {
@@ -149,8 +171,8 @@ export default function Transaction() {
             <Skeleton width={"w-20"} height={"h-7"} />
             <div className="grid grid-cols-4 gap-3">
               <div className="w-full col-span-3 space-y-3">
-                {Array.from({ length: 4 }).map(() => (
-                  <Skeleton width={"w-full"} height={"h-12"} />
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} width={"w-full"} height={"h-12"} />
                 ))}
                 {/* <Skeleton width={"w-full"} height={"h-12"} />
                 <Skeleton width={"w-full"} height={"h-12"} /> */}
@@ -164,8 +186,8 @@ export default function Transaction() {
             <Skeleton width={"w-20"} height={"h-7"} />
             <div className="grid grid-cols-4 gap-3">
               <div className="w-full col-span-3 space-y-3">
-                {Array.from({ length: 4 }).map(() => (
-                  <Skeleton width={"w-full"} height={"h-12"} />
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} width={"w-full"} height={"h-12"} />
                 ))}
                 {/* <Skeleton width={"w-full"} height={"h-12"} />
                 <Skeleton width={"w-full"} height={"h-12"} /> */}
@@ -201,11 +223,13 @@ export default function Transaction() {
                     {items.map((item) => (
                       <TransactionItem
                         key={item.id}
+                        id={item.id}
                         name={item.category.name}
                         icon={item.category.icon}
                         amount={`IDR ${transactionDirection(item.direction)}${moneyFormat(item.amount)}`}
                         desc={item.note}
                         date={`pada ${dateFormat(item.date, "time")}`}
+                        transactionDirection={item.direction}
                       />
                     ))}
                   </div>
@@ -257,7 +281,10 @@ export default function Transaction() {
 
       {/* jika data kosong */}
       {!loading && transactions.length === 0 && (
-        <TransactionItem icon={"CircleX"} name={"Belum ada data"} />
+        <div className="flex gap-3 rounded-xl bg-custom-green/5 p-5">
+          <CircleX />
+          <div className="">Belum ada data</div>
+        </div>
       )}
     </DashboardLayout>
   );

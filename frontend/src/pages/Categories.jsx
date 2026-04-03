@@ -5,6 +5,7 @@ import axios from "axios";
 import WalletItem from "../components/WalletItem";
 import { Link } from "react-router-dom";
 import Skeleton from "../components/Skeleton";
+import ErrorPage from "./ErrorPage";
 
 export default function Categories() {
   // data kantong
@@ -12,20 +13,54 @@ export default function Categories() {
   // data kategoti
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState({ wallets: true, categories: true });
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/wallets").then((res) => {
-      setWallets(res.data);
-      setLoading((prev) => ({ ...prev, wallets: false }));
-    });
+    axios
+      .get("http://127.0.0.1:8000/api/wallets")
+      .then((res) => {
+        setWallets(res.data);
+        setLoading((prev) => ({ ...prev, wallets: false }));
+      })
+      .catch((err) => {
+        setNotFound({
+          status: err.response?.status,
+          message: err.response?.message,
+        });
+      })
+      .finally(() => {
+        setLoading((prev) => ({ ...prev, categories: false }));
+      });
   }, []);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/categories").then((res) => {
-      setCategories(res.data);
-      setLoading((prev) => ({ ...prev, categories: false }));
-    });
+    axios
+      .get("http://127.0.0.1:8000/api/categories")
+      .then((res) => {
+        setCategories(res.data);
+      })
+      .catch((err) => {
+        setNotFound({
+          status: err.response?.status,
+          message: err.response?.data.message,
+        });
+      })
+      .finally(() => {
+        setLoading((prev) => ({ ...prev, categories: false }));
+      });
   }, []);
+
+  // jika data tidak ditemukan
+  if (notFound) {
+    return (
+      <ErrorPage
+        title={"Kantong & kategori"}
+        status={notFound.status}
+        message={notFound.message}
+      />
+    );
+  }
+
   return (
     <DashboardLayout title={"Kantong & kategori"}>
       {/* kantong / wallet */}
@@ -44,7 +79,7 @@ export default function Categories() {
           {/* Tambah kantong */}
           {!loading.wallets && (
             <Link
-              to={"/"}
+              to={"/kantong/tambah"}
               className="flex flex-col justify-center items-center px-5 aspect-square gap-3 rounded-xl text-center border-2 border-dashed border-custom-green hover:opacity-100 opacity-40"
             >
               <LucideIcons.Plus />
@@ -77,7 +112,7 @@ export default function Categories() {
           {/* Tambah kategori */}
           {!loading.categories && (
             <Link
-              to={"/"}
+              to={"/kategori/tambah"}
               className="flex flex-col justify-center items-center px-5 py-10 gap-3 rounded-xl text-center border-2 border-dashed  border-custom-green hover:opacity-100 opacity-40"
             >
               <LucideIcons.Plus />
@@ -88,24 +123,21 @@ export default function Categories() {
           )}
 
           {/* daftar kategori */}
-          {categories.map((category) => {
-            const Icon = LucideIcons[category.icon];
-            return (
-              <Link
-                to={`/kategori/${category.id}`}
-                key={category.id}
-                className="flex flex-col justify-center px-5 py-10 gap-3 rounded-xl bg-custom-green/10 hover:bg-custom-green/15"
-              >
-                <Icon />
-                <div className="">
-                  <div className="text-xl">{category.name}</div>
-                  <div className="text-sm">
-                    {category.transaction_count} transaksi
-                  </div>
+          {categories.map((category) => (
+            <Link
+              to={`/kategori/${category.id}`}
+              key={category.id}
+              className="flex flex-col justify-center transition-all px-5 hover:px-7 py-10 gap-3 rounded-xl bg-custom-green/10 hover:bg-custom-green/15"
+            >
+              <div className="text-3xl">{category.icon}</div>
+              <div className="">
+                <div className="text-xl">{category.name}</div>
+                <div className="text-sm">
+                  {category.transaction_count} transaksi
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </DashboardLayout>

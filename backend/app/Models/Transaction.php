@@ -15,6 +15,7 @@ class Transaction extends Model
         'wallet_id',
         'category_id',
         'date',
+        'location',
         'direction',
         'amount',
         'note',
@@ -42,5 +43,15 @@ class Transaction extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the wallet that owns the Transaction
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function wallet(): BelongsTo
+    {
+        return $this->belongsTo(Wallet::class);
     }
 }

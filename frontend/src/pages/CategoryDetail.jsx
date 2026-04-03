@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import * as LucideIcons from "lucide-react";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -15,7 +15,7 @@ export default function CategoryDetail() {
   //   dapatkan data kategori
   const [category, setCategory] = useState({ transaction: [] });
   const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const [failLoadData, setFailLoadData] = useState(false);
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:8000/api/categories/${id}`)
@@ -23,7 +23,7 @@ export default function CategoryDetail() {
         setCategory(res.data);
       })
       .catch((err) => {
-        setNotFound({
+        setFailLoadData({
           status: err.response?.status,
           message: err.response?.data.message,
         });
@@ -32,10 +32,6 @@ export default function CategoryDetail() {
         setLoading(false);
       });
   }, []);
-
-  // icon
-  const Icon = LucideIcons[category.icon ?? "Loader"];
-  console.log(notFound);
 
   // periode
   var periode;
@@ -51,12 +47,12 @@ export default function CategoryDetail() {
   }
 
   // jika data tidak ditemukan
-  if (notFound)
+  if (failLoadData)
     return (
       <ErrorPage
         title={"Detail kategori"}
-        status={notFound.status}
-        message={notFound.message}
+        status={failLoadData.status}
+        message={failLoadData.message}
       />
     );
 
@@ -66,9 +62,7 @@ export default function CategoryDetail() {
         {/* detail kategori */}
         {!loading && (
           <div className="bg-custom-red/10 rounded-xl w-full h-fit sticky top-5 p-5 space-y-3">
-            <div className="p-3 bg-custom-light/60 w-fit rounded-xl">
-              <Icon size={32} />
-            </div>
+            <div className="w-fit rounded-xl text-4xl">{category.icon}</div>
             <h1>{category.name}</h1>
             <div>
               <div className="text-sm text-neutral-600">Periode</div>
@@ -100,6 +94,7 @@ export default function CategoryDetail() {
             </div>
 
             {/* opsi */}
+
             <div className="rounded-full p-3 bg-custom-red/10 hover:bg-custom-red/20 flex justify-center items-center gap-1 w-full">
               <LucideIcons.CircleEllipsis size={20} />
               <div className="">Menu</div>
@@ -120,7 +115,7 @@ export default function CategoryDetail() {
               color={"bg-custom-red/20"}
             />
             {Array.from({ length: 7 }).map((_, i) => (
-              <div className="space-y-1">
+              <div key={i} className="space-y-1">
                 <Skeleton
                   height={"h-4"}
                   width={"w-1/2"}
@@ -142,7 +137,7 @@ export default function CategoryDetail() {
           {!loading && (
             <button
               title="Tambah transaksi baru"
-              className={`flex items-center justify-center gap-2 rounded-xl p-5 border-2 border-dashed border-custom-green opacity-40 hover:opacity-100 focus:opacity-100 cursor-pointer w-full ${category.transaction.length == 0 ? "h-full" : "hover:rounded-full focus:rounded-full"}`}
+              className={`flex items-center justify-center gap-2 rounded-xl p-5 border-2 border-dashed border-custom-green opacity-40 hover:opacity-100 focus:opacity-100 cursor-pointer w-full ${category.transaction.length == 0 ? "h-full" : "hover:rounded-[3rem] focus:rounded-[3rem]"} transition-all ease-in-out`}
             >
               <LucideIcons.Plus size={20} />
               <div className="">Tambah transaksi</div>
@@ -153,15 +148,21 @@ export default function CategoryDetail() {
           {category.transaction.map((transaction) => (
             <TransactionItem
               key={transaction.id}
-              name={dateFormat(transaction.date, "full-datetime")}
+              id={transaction.id}
+              icon={
+                transaction.direction == "in" ? "ArrowDownLeft" : "ArrowUpRight"
+              }
+              name={dateFormat(transaction.date)}
+              date={dateFormat(transaction.date, "time")}
               desc={transaction.note}
               amount={`IDR ${transactionDirection(transaction.direction)}${moneyFormat(transaction.amount)}`}
+              transactionDirection={transaction.direction}
             />
           ))}
           {/* loading */}
           {loading &&
             Array.from({ length: 10 }).map((_, i) => (
-              <Skeleton width={"w-full"} height={"h-12"} />
+              <Skeleton key={i} width={"w-full"} height={"h-12"} />
             ))}
         </div>
       </div>

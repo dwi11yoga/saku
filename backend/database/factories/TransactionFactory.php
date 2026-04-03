@@ -22,6 +22,7 @@ class TransactionFactory extends Factory
             'wallet_id' => fake()->numberBetween(1, 3),
             'category_id' => fake()->numberBetween(1, 3),
             'date' => $date,
+            'location' => fake()->address(),
             'amount' => fake()->numberBetween(5000, 100000),
             'direction' => fake()->randomElement(['in', 'out']),
             'note' => fake()->sentence(10),

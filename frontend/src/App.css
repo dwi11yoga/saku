@@ -3,8 +3,12 @@
 @theme {
   --color-custom-light: #f9f5f0;
   --color-custom-green: #344f1f;
-  --color-custom-yellow: #f4991a;
+  /* --color-custom-yellow: #f4991a; */
+  --color-custom-yellow: #f77f00;
   --color-custom-red: #d96868;
+  --color-custom-blue: #406093;
+  --color-custom-brown: #8c5a3c;
+  --color-custom-purple: #8f0177;
 }
 
 body {
@@ -12,19 +16,20 @@ body {
   font-family: "Google Sans", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+  color: var(--color-neutral-800);
 }
 
 /* hilangkan panah default pada input number */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
 }
 
-input[type=number] {
-    -moz-appearance: textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
-h1{
+h1 {
   font-size: var(--text-3xl);
   font-weight: var(--font-weight-bold);
 }
