@@ -1,7 +1,7 @@
 import { Check, Info, TriangleAlert, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function FlashMessage({ flash, url }) {
+export default function FlashMessage({ flash }) {
   // icon
   const icon = {
     success: Check,
@@ -20,19 +20,21 @@ export default function FlashMessage({ flash, url }) {
   };
   return (
     <div
-      className={`z-50 fixed bottom-10 right-10 max-w-1/2 border ${color[flash.type] ?? color["success"]} p-3 rounded-xl flex gap-1`}
+      className={`z-50 fixed bottom-10 right-10 max-w-1/2 rounded-xl bg-custom-light`}
     >
-      <Icon className="shrink-0" />
-      <div className="">
-        {flash.message}{" "}
-        {url && (
-          <Link
-            to={url.link}
-            className="inline underline underline-offset-2 decoration-2"
-          >
-            {url.text ?? "Lihat"}
-          </Link>
-        )}
+      <div className={`border ${color[flash.type] ?? color["success"]} rounded-xl p-3 flex gap-1`}>
+        <Icon className="shrink-0" />
+        <div className="">
+          {flash.message}{" "}
+          {flash.url && (
+            <Link
+              to={flash.url.link}
+              className="inline underline underline-offset-2 decoration-2"
+            >
+              {flash.url.text ?? "Lihat"}
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

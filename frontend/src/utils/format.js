@@ -31,6 +31,7 @@ export function dateFormat(date, output) {
       timeZoneName: "short",
     });
   } else if (output == "short-date") {
+    if (inputDate == now) return "Hari ini";
     return new Date(date).toLocaleDateString("id-ID", { dateStyle: "short" });
   } else {
     //   jika date==hari ini

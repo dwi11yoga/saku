@@ -12,6 +12,8 @@ Route::get('/user', function (Request $request) {
 
 // daftar transaksi
 Route::get('/transactions', [TransactionController::class, 'transactionList']);
+// tambah transaksi
+Route::post('/transactions', [TransactionController::class, 'create']);
 // cashflow
 Route::get('/cashflow', [TransactionController::class, 'cashflow']);
 // detail transaksi

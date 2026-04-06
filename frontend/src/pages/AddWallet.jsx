@@ -7,6 +7,7 @@ import Frimousse from "../utils/Frimousse";
 import InputValidation from "../components/InputValidation";
 import FlashMessage from "../components/FlashMessage";
 import walletColor from "../utils/walletColor";
+import { Button, Emoji, Input, TextArea } from "../components/Form";
 
 export default function AddWallet() {
   // simpan data form
@@ -19,26 +20,12 @@ export default function AddWallet() {
     note: "",
   });
 
-  // simpan tampil/tidaknya icon picker
-  const [showIconPicker, setShowIconPicker] = useState(false);
   // menyimpan validasi error
   const [errors, setErrors] = useState({});
   // menyimpan flash message
   const [flash, setFlash] = useState(null);
   // simpan apakah proses simpan sedang berlangsung/tidak
   const [saving, setSaving] = useState(false);
-
-  // deteksi klik diluar input emoji
-  const pickerRef = useRef(null);
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
-        setShowIconPicker(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   // validasi
   const fieldSchemas = z.object({
@@ -115,8 +102,7 @@ export default function AddWallet() {
           type: "success",
           message: "Kantong baru telah berhasil dibuat.",
         });
-        console.log(res.data);
-        
+      console.log(res.data);
     } catch (error) {
       const status = error.response.status;
       const message = error.response.data.message;
@@ -161,46 +147,22 @@ export default function AddWallet() {
       >
         <div className="w-1/3 space-y-2">
           {/* icon */}
-          <div className="" ref={pickerRef}>
-            <label htmlFor="emoji" className="text-neutral-500">
-              Icon
-            </label>
-            <div className="relative">
-              <input
-                id="emoji"
-                type="text"
-                value={form.emoji}
-                readOnly
-                onClick={() => setShowIconPicker(true)}
-                className={`outline-none focus:border-b-2 w-full transition-all duration-75 ease-in-out font-semibold ${form.emoji === "" ? "text-xl" : "text-4xl"}`}
-                placeholder="Pilih emoji..."
-              />
-              {showIconPicker && (
-                <div
-                  className={`absolute ${form.emoji === "" ? "top-10" : "top-12"}`}
-                >
-                  <Frimousse
-                    name="emoji"
-                    onChange={(emoji) => {
-                      setForm({ ...form, emoji: emoji });
-                      handleInputChange("emoji", emoji);
-                      setShowIconPicker(false);
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-            {errors.emoji && <InputValidation message={errors.emoji} />}
-          </div>
+          <Emoji
+            label={"Icon"}
+            id={"emoji"}
+            value={form.emoji}
+            error={errors.emoji}
+            onChange={(emoji) => handleInputChange("emoji", emoji)}
+          />
           {/* warna */}
           <div className="">
             <div className="text-neutral-500">Warna</div>
             {/* pilihan warna */}
             <div className="grid grid-cols-4 gap-1">
-              {colors.map((color) => (
-                <div className="w-full" key={color.id}>
+              {colors.map((color, i) => (
+                <div className="w-full" key={i}>
                   <input
-                    className="hidden"
+                    className="sr-only"
                     type="radio"
                     name="color"
                     id={color.id}
@@ -222,81 +184,41 @@ export default function AddWallet() {
             {errors.color && <InputValidation message={errors.color} />}
           </div>
           {/* nama kategori */}
-          <div className="">
-            <label htmlFor="category" className="text-neutral-500">
-              Nama kantong
-            </label>
-            <input
-              id="category"
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-              className={`${errors.name ? "border-red-600" : ""} outline-none focus:border-b-2 w-full transition-all duration-75 ease-in-out text-xl font-semibold`}
-              placeholder="Ketik nama..."
-            />
-            {errors.name && <InputValidation message={errors.name} />}
-          </div>
+          <Input
+            label={"Nama kantong"}
+            id={"name"}
+            type={"text"}
+            value={form.name}
+            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
+            error={errors.name}
+            placeholder={"Ketik nama..."}
+          />
+
           {/* saldo awal */}
-          <div className="">
-            <label htmlFor="initial_balance" className="text-neutral-500">
-              Saldo awal
-            </label>
-            <input
-              id="initial_balance"
-              name="initial_balance"
-              type="number"
-              value={form.initial_balance}
-              onChange={(e) =>
-                handleInputChange(e.target.name, Number(e.target.value))
-              }
-              className={`${errors.initial_balance ? "border-red-600" : ""} outline-none focus:border-b-2 w-full transition-all duration-75 ease-in-out text-xl font-semibold`}
-              placeholder="Ketik jumlah saldo..."
-            />
-            {errors.initial_balance && (
-              <InputValidation message={errors.initial_balance} />
-            )}
-          </div>
+          <Input
+            label={"Saldo awal"}
+            id={"initial_balance"}
+            type={"number"}
+            value={form.initial_balance}
+            onChange={(e) =>
+              handleInputChange(e.target.name, Number(e.target.value))
+            }
+            error={errors.initial_balance}
+            placeholder={"Ketik jumlah saldo..."}
+          />
+
           {/* Catatan */}
-          <div className="">
-            <label htmlFor="note" className="text-neutral-500">
-              Catatan
-            </label>
-            <textarea
-              id="note"
-              name="note"
-              value={form.note}
-              onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-              onInput={(e) => {
-                e.target.style.height = "auto";
-                e.target.style.height = e.target.scrollHeight + "px";
-              }}
-              className={`${errors.note ? "border-red-600" : ""} outline-none h-8 max-h-64 focus:border-b-2 w-full transition-all duration-75 ease-in-out text-xl font-semibold`}
-              placeholder="Ketik catatan..."
-            />
-            {/* error */}
-            {errors.note && <InputValidation message={errors.note} />}
-          </div>
+          <TextArea
+            label={"Catatan"}
+            id={"note"}
+            value={form.note}
+            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
+            error={errors.note}
+          />
+          <div className=""></div>
 
           {/* tombol submit */}
-          <button
-            disabled={saving}
-            className={`bg-custom-green/20 hover:bg-custom-green/30 rounded-xl hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out p-5 flex items-center gap-2 ${saving ? "cursor-progress" : "cursor-pointer"}`}
-          >
-            {!saving ? (
-              <div className="flex items-center gap-2">
-                Tambah kategori
-                <CirclePlus />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                Menyimpan...
-                <div className="animate-spin">
-                  <LoaderCircle />
-                </div>
-              </div>
-            )}
-          </button>
+          <Button text={"Tambah kantong"} isSaving={saving} />
         </div>
       </form>
 
@@ -305,7 +227,7 @@ export default function AddWallet() {
         <FlashMessage
           flash={flash}
           url={
-            flash.type === "success" ? { link: "/kategori", text: "Lihat" } : ""
+            flash.type === "success" ? { link: "/kantong", text: "Lihat" } : ""
           }
         />
       )}

@@ -69,9 +69,9 @@ class WalletController extends Controller
     }
 
     // dapatkan semua data wallet
-    public function getAllWallet()
+    public function getAllWallet(Request $request)
     {
-        return Wallet::where('user_id', 1)->latest()->get();
+        return Wallet::where('user_id', $request->user_id)->latest()->get();
     }
 
     // dapatkan detail wallet / kantong
@@ -80,6 +80,7 @@ class WalletController extends Controller
         $data = Wallet::where('id', $id)
             ->with(['transaction' => function ($query) {
                 $query->where('user_id', 1)
+                    ->with('category')
                     ->orderByDesc('date');
             }])
             ->withCount(['transaction as debit_count' => function ($query) {

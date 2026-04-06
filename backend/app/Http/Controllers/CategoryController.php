@@ -36,10 +36,10 @@ class CategoryController extends Controller
         ], 200);
     }
     // dapatkan daftar data kategori
-    public function getCategories()
+    public function getCategories(Request $request)
     {
         try {
-            $data = Category::where('user_id', 1)
+            $data = Category::where('user_id', $request->user_id)
                 ->latest()
                 ->withCount(['transaction' => function ($query) {
                     $query->where('user_id', 1);

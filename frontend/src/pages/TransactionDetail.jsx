@@ -119,7 +119,8 @@ export default function TransactionDetail() {
               <LucideIcons.Map size={18} />
               Lokasi
             </div>
-            <div className="flex items-center">
+            {!transaction.location ? '—' : (
+              <div className="flex items-center">
               <Link
                 to={`/lokasi/${transaction.location}`}
                 className={`${transaction.direction === "in" ? "hover:bg-custom-green/10" : "hover:bg-custom-red/20"} rounded-full group-hover:px-2`}
@@ -136,6 +137,7 @@ export default function TransactionDetail() {
                 <LucideIcons.ArrowUpRight size={20} />
               </Link>
             </div>
+            )}
           </div>
           {/* tanggal */}
           <div

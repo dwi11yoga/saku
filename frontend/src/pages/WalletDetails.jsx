@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { dateFormat, moneyFormat, transactionDirection } from "../utils/format";
 import Skeleton from "../components/Skeleton";
 import {
@@ -98,13 +98,14 @@ export default function WalletDetail() {
 
         {/* tambah transaksi */}
         <div className="flex justify-center mt-8">
-          <button
+          <Link
+            to={"/transaksi/tambah"}
             title="Tambah transaksi baru"
             className={`w-fit flex items-center justify-center gap-2 rounded-xl p-3 text-sm border-2 border-dashed hover:bg-custom-green/20 text-neutral-500 border-neutral-500 hover:text-neutral-800 hover:border-neutral-800 cursor-pointer hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out`}
           >
             <Plus size={20} />
             <div className="">Tambah transaksi</div>
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -208,17 +209,7 @@ export default function WalletDetail() {
 
         {/* daftar transaksi */}
         <div className="col-span-3 space-y-2">
-          {/* tambah */}
-          {/* {!loading && (
-            <button
-              title="Tambah transaksi baru"
-              className={`flex items-center justify-center gap-2 rounded-xl p-5 border-2 border-dashed border-custom-green opacity-40 hover:opacity-100 focus:opacity-100 cursor-pointer w-full ${wallet.transaction.length == 0 ? "h-full" : "hover:rounded-[3rem] focus:rounded-[3rem]"} transition-all ease-in-out`}
-            >
-              <Plus size={20} />
-              <div className="">Tambah transaksi</div>
-            </button>
-          )} */}
-
+          <div className="">Daftar transaksi</div>
           {/* daftar */}
           {wallet.transaction.map((transaction) => (
             <TransactionItem
@@ -227,8 +218,8 @@ export default function WalletDetail() {
               icon={
                 transaction.direction == "in" ? "ArrowDownLeft" : "ArrowUpRight"
               }
-              name={dateFormat(transaction.date)}
-              date={dateFormat(transaction.date, "time")}
+              name={transaction.category.name}
+              date={dateFormat(transaction.date, "short-date")}
               desc={transaction.note}
               amount={`IDR ${transactionDirection(transaction.direction)}${moneyFormat(transaction.amount)}`}
               transactionDirection={transaction.direction}

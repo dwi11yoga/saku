@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Home,
   ArrowLeftRight,
@@ -8,11 +8,23 @@ import {
   Info,
   PanelLeftOpen,
   PanelRightOpen,
+  Wallet,
 } from "lucide-react";
 import { useState } from "react";
 
 export default function Nav() {
   const [expanded, setExpanded] = useState(false);
+
+  // daftar menu
+  const menus = [
+    { path: "/", label: "Home", icon: Home },
+    { path: "/transaksi", label: "Transaksi", icon: ArrowLeftRight },
+    { path: "/kantong", label: "Kantong", icon: Wallet },
+    { path: "/kategori", label: "Kategori", icon: Tags },
+    { path: "/statistik", label: "Statistik", icon: ChartPie },
+    { path: "/pengaturan", label: "Pengaturan", icon: Settings },
+    { path: "/tentang", label: "Tentang", icon: Info },
+  ];
   return (
     <div>
       <nav
@@ -39,48 +51,22 @@ export default function Nav() {
 
         {/* menu */}
         <div className="space-y-1">
-          <Link
-            to={"/"}
-            className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
-          >
-            <Home width={20} height={20} />
-            {expanded && <div>Home</div>}
-          </Link>
-          <Link
-            to={"/transaksi"}
-            className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
-          >
-            <ArrowLeftRight width={20} height={20} />
-            {expanded && <div>Transaksi</div>}
-          </Link>
-          <Link
-            to={"/statistik"}
-            className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
-          >
-            <ChartPie width={20} height={20} />
-            {expanded && <div>Statistik</div>}
-          </Link>
-          <Link
-            to={"/kategori"}
-            className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
-          >
-            <Tags width={20} height={20} />
-            {expanded && <div>Kantong & kategori</div>}
-          </Link>
-          <Link
-            to={"/pengaturan"}
-            className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
-          >
-            <Settings width={20} height={20} />
-            {expanded && <div>Pengaturan</div>}
-          </Link>
-          <Link
-            to={"/tentang"}
-            className={`flex gap-2 items-center p-3 rounded-xl hover:bg-custom-green/30 text-sm`}
-          >
-            <Info width={20} height={20} />
-            {expanded && <div>Tentang</div>}
-          </Link>
+          {menus.map((menu) => {
+            const Icon = menu.icon;
+            return (
+              <NavLink
+                key={menu.label}
+                to={menu.path}
+                className={({ isActive }) =>
+                  `flex gap-2 items-center p-3 text-sm rounded-xl focus:rounded-3xl hover:rounded-3xl hover:bg-custom-green/20 ${expanded && 'hover:px-5'} transition-all ease-in-out
+        ${isActive ? "text-custom-green bg-custom-green/10" : "text-neutral-600"}`
+                }
+              >
+                <Icon width={20} height={20} />
+                {expanded && <div>{menu.label}</div>}
+              </NavLink>
+            );
+          })}
         </div>
       </nav>
     </div>

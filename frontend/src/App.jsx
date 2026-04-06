@@ -10,6 +10,8 @@ import WalletDetail from "./pages/WalletDetails";
 import AddCategory from "./pages/AddCategory";
 import TransactionDetail from "./pages/TransactionDetail";
 import AddWallet from "./pages/AddWallet";
+import AddTransaction from "./pages/AddTransaction";
+import Wallets from "./pages/Wallets";
 
 export default function App() {
   return (
@@ -19,14 +21,16 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         {/* transaksi */}
         <Route path="/transaksi" element={<Transaction />} />
-        <Route path="/transaksi/tambah" />
+        <Route path="/transaksi/tambah" element={<AddTransaction />} />
         <Route path="/transaksi/:id" element={<TransactionDetail />} />
-        {/* kantong & kategori */}
+        {/* kantong */}
+        <Route path="/kantong" element={<Wallets />} />
+        <Route path="/kantong/tambah" element={<AddWallet />} />
+        <Route path="/kantong/:id" element={<WalletDetail />} />
+        {/* kategori */}
         <Route path="/kategori" element={<Categories />} />
         <Route path="/kategori/tambah" element={<AddCategory />} />
         <Route path="/kategori/:id" element={<CategoryDetail />} />
-        <Route path="/kantong/tambah" element={<AddWallet />} />
-        <Route path="/kantong/:id" element={<WalletDetail />} />
       </Routes>
     </BrowserRouter>
   );

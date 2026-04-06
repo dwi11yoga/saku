@@ -3,12 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+use function Symfony\Component\Clock\now;
 
 class TransactionController extends Controller
 {
+    // buat transaksi
+    public function create(Request $request)
+    {
+        // validasi
+        $request->validate([
+            'user_id' => 'required|integer|',
+            'amount' => 'required|integer|min:0|max:999999999999',
+            'direction' => 'required|in:in,out',
+            'category' => 'required|integer',
+            'wallet' => 'required|integer',
+            'datetime' => 'required|date',
+            'location' => 'nullable|string|max:50',
+            'note' => 'nullable|string|max:100',
+        ]);
+
+        // simpan transaksi
+        $saved = Transaction::create([
+            'user_id' => $request->user_id,
+            'amount' => $request->amount,
+            'direction' => $request->direction,
+            'category_id' => $request->category,
+            'wallet_id' => $request->wallet,
+            'date' => $request->datetime,
+            'location' => $request->location,
+            'note' => $request->note,
+        ]);
+
+        // ubah saldo saat ini
+        $wallet = Wallet::find($request->wallet);
+        $balance_changes = $request->direction == "out" ? ($wallet->balance - $request->amount) : ($wallet->balance + $request->amount);
+        $wallet->update([
+            "balance" => $balance_changes
+        ]);
+
+        // kembalikan
+        return response()->json($saved, 200);
+    }
     // dapatkan banyak data transaksi
     public function transactionList(Request $request)
     {
@@ -33,24 +74,39 @@ class TransactionController extends Controller
             }
 
             // jika di beri filter bulan
-            if ($request->has('month') && $request->has('year')) {
-                $data = $data->whereMonth('date', $request->month)
-                    ->whereYear('date', $request->year);
-            }
+            // kalau bisa sertakan request timezone juga ya gess ya
+            if ($request->has('month') && $request->has('year') && $request->has('timezone')) {
+                $startOfMonth = Carbon::create($request->year, $request->month, 1, 0, 0, 0, $request->timezone ?? 'UTC')
+                    ->startOfMonth()
+                    ->utc() // konversi ke utc
+                    ->toDateTimeString();
+                $endOfMonth = Carbon::create($request->year, $request->month, 1, 0, 0, 0, $request->timezone ?? 'UTC')
+                    ->endOfMonth()
+                    ->utc() // konversi ke utc
+                    ->toDateTimeString();
+                $data = $data->whereBetween('date', [$startOfMonth, $endOfMonth]);
 
-            // dapatkan data
-            $data = $data->get();
+                
+                // $data = $data->whereMonth('date', $request->month)
+                //     ->whereYear('date', $request->year);
+                }
+                
+                // dapatkan data
+                $data = $data->get();
+                Log::info('Start: ' . $startOfMonth);
+                Log::info('End: ' . $endOfMonth);
+                Log::info('Count: ' . $data->count());
         } catch (QueryException $e) {
             // jika tidak terhubung ke database...
             return response()->json(['message' => 'Gagal mengambil data dari database'], 500);
         }
 
         // jika di groupby
-        if ($request->has('groupby')) {
-            $data = $data->groupBy(function ($transaction) {
-                return $transaction->date->format('Y-m-d');
-            });
-        }
+        // if ($request->has('groupby')) {
+        //     $data = $data->groupBy(function ($transaction) {
+        //         return $transaction->date->format('Y-m-d');
+        //     });
+        // }
 
         return $data;
     }

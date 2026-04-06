@@ -36,13 +36,27 @@ export default function Transaction() {
           groupby: true,
           month: month,
           year: year,
+          timezone: "Asia/Jakarta",
         },
       })
       .then((res) => {
         // set parameter
         setSearchParam({ month, year });
+
+        // kelompokkan transaksi berdasarkan tanggal
+        const data = {};
+        res.data.map((transaction) => {
+          const date = dateFormat(transaction.date);
+          if (!data[date]) {
+            data[date] = []; // inisialisasi array jika belum ada
+          }
+          data[date].push(transaction);
+        });
+
+        console.log(data);
+
         // set data transaksi
-        setTransactions(res.data);
+        setTransactions(data);
       })
       .catch((err) => {
         setFailLoadData({
@@ -216,7 +230,7 @@ export default function Transaction() {
           const total = debit - credit;
           return (
             <div key={day} className="space-y-3">
-              <div className="">{dateFormat(day)}</div>
+              <div className="">{day}</div>
               <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-3 space-y-3">
                   <div className="space-y-2">
