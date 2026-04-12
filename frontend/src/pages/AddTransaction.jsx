@@ -13,10 +13,10 @@ export default function AddTransaction() {
   //   data form
   const emptyForm = {
     user_id: 1,
-    category: 1,
-    wallet: 1,
+    category: "",
+    wallet: "",
     direction: "out",
-    amount: 10000,
+    amount: "",
     transaction_date: "",
     transaction_time: "",
     location: "",
@@ -136,7 +136,7 @@ export default function AddTransaction() {
           type: "success",
           message: "Transaksi baru berhasil dibuat.",
           url: {
-            link: `/transaksi/${res.data.id}`,
+            link: `/transactions/${res.data.id}`,
             text: "Lihat",
           },
         });

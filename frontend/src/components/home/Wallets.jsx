@@ -30,14 +30,14 @@ export default function Wallets() {
       </div>
       <div className="space-y-2 grid grid-rows-2 gap-2 aspect-square">
         <Link
-          to={"/transaksi/tambah"}
+          to={"/transactions/new"}
           className="bg-custom-green/10 rounded-xl p-5 h-full flex items-center gap-2 hover:bg-custom-green/30 transition-all duration-100 cursor-pointer"
         >
           <Plus />
           <span>Tambah transaksi</span>
         </Link>
         <Link
-          to={"/kantong/tambah"}
+          to={"/wallets/new"}
           className="bg-custom-green/10 rounded-xl p-5 h-full flex items-center gap-2 hover:bg-custom-green/30 transition-all duration-100 cursor-pointer"
         >
           <WalletMinimal />

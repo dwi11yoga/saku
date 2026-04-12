@@ -56,7 +56,7 @@ export default function Wallets() {
         {/* Tambah kantong */}
         {!loading.wallets && (
           <Link
-            to={"/kantong/tambah"}
+            to={"/wallets/new"}
             className="flex flex-col justify-center items-center px-5 aspect-square gap-3 rounded-xl text-center border-2 border-dashed border-custom-green hover:opacity-100 opacity-40"
           >
             <Plus />

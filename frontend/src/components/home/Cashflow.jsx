@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "../../utils/axios";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
-import { createRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { moneyFormat } from "../../utils/format";
 
 export default function Cashflow() {
@@ -8,7 +8,7 @@ export default function Cashflow() {
   const [credit, setCredit] = useState(0);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/cashflow").then((res) => {
+    axios.get("/cashflow").then((res) => {
       setDebit(res.data.debit);
       setCredit(res.data.credit);
     });

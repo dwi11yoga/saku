@@ -6,6 +6,8 @@ use App\Models\Category;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
+use function Symfony\Component\Clock\now;
+
 class CategoryController extends Controller
 {
     // tambah kategori
@@ -35,6 +37,41 @@ class CategoryController extends Controller
             'message' => 'Berhasil menyimpan kategori baru'
         ], 200);
     }
+
+    // update kategori
+    public function update(Request $request)
+    {
+        // validasi
+        $request->validate([
+            'user_id' => 'required|numeric',
+            'icon' => 'required',
+            'name' => 'required|string|max:50',
+            'note' => 'nullable|string|max:100'
+        ]);
+
+        $data = Category::find($request->id);
+        
+        // cek apakah pengguna adalah pemilik kategori
+        if ($data->user_id != $request->user_id) {
+            return response()->json(['message' => 'Anda tidak memiliki hak untuk mengedit kategori ini'], 403);
+        }
+
+        // simpan
+        try {
+            $data->update([
+                'icon' => $request->icon,
+                'name' => $request->name,
+                'note' => $request->note,
+                'updated_at' => now()
+            ]);
+        } catch (QueryException $e) {
+            return response()->json($e->getMessage(), $e->getCode());
+        }
+
+        // jika sukses
+        return response()->json(['message' => 'Kategori berhasil diedit'], 200);
+    }
+
     // dapatkan daftar data kategori
     public function getCategories(Request $request)
     {

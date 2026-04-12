@@ -6,7 +6,7 @@ export default function WalletItem({ wallet, walletsLength }) {
   return (
     <Link
       key={wallet.id}
-      to={`/kantong/${wallet.id}`}
+      to={`/wallets/${wallet.id}`}
       className={`flex ${walletsLength ?? "aspect-square"} flex-col justify-between rounded-xl p-5 hover:p-6 transition-all ${walletColor(wallet.color).background} ${walletColor(wallet.color).hover}`}
     >
       <div className="text-5xl">{wallet.icon}</div>

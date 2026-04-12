@@ -55,7 +55,7 @@ export default function Categories() {
         {/* Tambah kategori */}
         {!loading.categories && (
           <Link
-            to={"/kategori/tambah"}
+            to={"/categories/new"}
             className="flex flex-col justify-center items-center px-5 py-10 gap-3 rounded-xl text-center border-2 border-dashed  border-custom-green hover:opacity-100 opacity-40"
           >
             <Plus />
@@ -68,7 +68,7 @@ export default function Categories() {
         {/* daftar kategori */}
         {categories.map((category) => (
           <Link
-            to={`/kategori/${category.id}`}
+            to={`/categories/${category.id}`}
             key={category.id}
             className="flex flex-col justify-center transition-all px-5 hover:px-7 py-10 gap-3 rounded-xl bg-custom-green/10 hover:bg-custom-green/15"
           >

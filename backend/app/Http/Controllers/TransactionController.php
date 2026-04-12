@@ -7,7 +7,6 @@ use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 use function Symfony\Component\Clock\now;
 
@@ -58,6 +57,11 @@ class TransactionController extends Controller
 
             $data = Transaction::with('category');
 
+            // jika data yang diminta berdasarkan loakasi
+            if ($request->has("location")) {
+                $data = $data->where("location", $request->location);
+            }
+
             // order
             if ($request->has('orderBy')) {
                 match ($request->orderBy) {
@@ -86,16 +90,10 @@ class TransactionController extends Controller
                     ->toDateTimeString();
                 $data = $data->whereBetween('date', [$startOfMonth, $endOfMonth]);
 
-                
                 // $data = $data->whereMonth('date', $request->month)
                 //     ->whereYear('date', $request->year);
-                }
-                
-                // dapatkan data
-                $data = $data->get();
-                Log::info('Start: ' . $startOfMonth);
-                Log::info('End: ' . $endOfMonth);
-                Log::info('Count: ' . $data->count());
+            }
+            $data = $data->get();
         } catch (QueryException $e) {
             // jika tidak terhubung ke database...
             return response()->json(['message' => 'Gagal mengambil data dari database'], 500);
@@ -114,15 +112,26 @@ class TransactionController extends Controller
     // dapatkan data cashflow (debit dan credit)
     public function cashflow(Request $request)
     {
+        // periode waktu
+        // jika di request ada timezone, maka gunakan waktu berdasarkan timezone
+        $startDate = Carbon::now($request->timezone ?? "UTC")
+            ->startOfDay()
+            ->subDays(6) // 7 hari sebelumnya
+            ->utc()
+            ->toDateTimeString();
+        $endDate = Carbon::now($request->timezone ?? "UTC")
+            ->endOfDay()
+            ->utc()
+            ->toDateTimeString();
         // debit
         $debit = Transaction::where('user_id', 1)
             ->where('direction', 'in')
-            ->whereBetween('date', [Carbon::now()->subDays(7)->startOfDay(), now()->endOfDay()])
+            ->whereBetween('date', [$startDate, $endDate])
             ->sum('amount');
         // credit
         $credit = Transaction::where('user_id', 1)
             ->where('direction', 'out')
-            ->whereBetween('date', [Carbon::now()->subDays(7)->startOfDay(), now()->endOfDay()])
+            ->whereBetween('date', [$startDate, $endDate])
             ->sum('amount');
         return [
             'debit' => $debit,

@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { dateFormat, moneyFormat } from "../../utils/format";
-import axios from "axios";
-import * as LucideIcons from "lucide-react";
+import axios from "../../utils/axios";
 import TransactionItem from "../TransactionItem";
 
 export default function LatestTransaction() {
   const [transactions, setTransactions] = useState([]);
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/transactions", {
+      .get("/transactions", {
         params: {
           limit: 5,
         },
@@ -36,6 +35,7 @@ export default function LatestTransaction() {
               desc={date}
               amount={`IDR ${direction}${amount}`}
               icon={transaction.category.icon}
+              iconType={"emoji"}
               transactionDirection={transaction.direction}
             />
           );

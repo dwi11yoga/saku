@@ -12,6 +12,9 @@ import TransactionDetail from "./pages/TransactionDetail";
 import AddWallet from "./pages/AddWallet";
 import AddTransaction from "./pages/AddTransaction";
 import Wallets from "./pages/Wallets";
+import LocationDetail from "./pages/LocationDetail";
+import EditWallet from "./pages/EditWallet";
+import EditCategory from "./pages/EditCategory";
 
 export default function App() {
   return (
@@ -20,17 +23,20 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         {/* transaksi */}
-        <Route path="/transaksi" element={<Transaction />} />
-        <Route path="/transaksi/tambah" element={<AddTransaction />} />
-        <Route path="/transaksi/:id" element={<TransactionDetail />} />
+        <Route path="/transactions" element={<Transaction />} />
+        <Route path="/transactions/new" element={<AddTransaction />} />
+        <Route path="/transactions/:id" element={<TransactionDetail />} />
+        <Route path="/locations/:name" element={<LocationDetail />} />
         {/* kantong */}
-        <Route path="/kantong" element={<Wallets />} />
-        <Route path="/kantong/tambah" element={<AddWallet />} />
-        <Route path="/kantong/:id" element={<WalletDetail />} />
+        <Route path="/wallets" element={<Wallets />} />
+        <Route path="/wallets/new" element={<AddWallet />} />
+        <Route path="/wallets/:id" element={<WalletDetail />} />
+        <Route path="/wallets/:id/edit" element={<EditWallet />} />
         {/* kategori */}
-        <Route path="/kategori" element={<Categories />} />
-        <Route path="/kategori/tambah" element={<AddCategory />} />
-        <Route path="/kategori/:id" element={<CategoryDetail />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/categories/new" element={<AddCategory />} />
+        <Route path="/categories/:id" element={<CategoryDetail />} />
+        <Route path="/categories/:id/edit" element={<EditCategory />} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,6 +9,7 @@ import {
   PanelLeftOpen,
   PanelRightOpen,
   Wallet,
+  History,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -18,12 +19,11 @@ export default function Nav() {
   // daftar menu
   const menus = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/transaksi", label: "Transaksi", icon: ArrowLeftRight },
-    { path: "/kantong", label: "Kantong", icon: Wallet },
-    { path: "/kategori", label: "Kategori", icon: Tags },
-    { path: "/statistik", label: "Statistik", icon: ChartPie },
-    { path: "/pengaturan", label: "Pengaturan", icon: Settings },
-    { path: "/tentang", label: "Tentang", icon: Info },
+    { path: "/transactions", label: "Transaksi", icon: History },
+    { path: "/wallets", label: "Kantong", icon: Wallet },
+    { path: "/categories", label: "Kategori", icon: Tags },
+    { path: "/statistics", label: "Statistik", icon: ChartPie },
+    { path: "/settings", label: "Pengaturan", icon: Settings },
   ];
   return (
     <div>

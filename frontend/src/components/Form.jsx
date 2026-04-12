@@ -84,11 +84,12 @@ export function Select({
           {placeholder ?? `Pilih ${label.toLowerCase()}`}
         </option>
         {/* foreach option */}
-        {Array.isArray(options) && options.map((option, i) => (
-          <option key={option.value} value={option.value}>
-            {option.text}
-          </option>
-        ))}
+        {Array.isArray(options) &&
+          options.map((option, i) => (
+            <option key={option.value} value={option.value}>
+              {option.text}
+            </option>
+          ))}
       </select>
       {error && <InputValidation message={error} />}
     </div>
@@ -146,7 +147,8 @@ export function Emoji({ label, id, value, onChange, error }) {
 }
 
 // buton submit
-export function Button({ text, isSaving }) {
+export function Button({ text, isSaving, icon }) {
+  const Icon = icon ?? CirclePlus;
   return (
     <button
       disabled={isSaving}
@@ -155,7 +157,7 @@ export function Button({ text, isSaving }) {
       {!isSaving ? (
         <div className="flex items-center gap-2">
           {text}
-          <CirclePlus />
+          <Icon />
         </div>
       ) : (
         <div className="flex items-center gap-2">

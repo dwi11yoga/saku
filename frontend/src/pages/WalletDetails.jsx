@@ -15,6 +15,7 @@ import {
 import axios from "axios";
 import TransactionItem from "../components/TransactionItem";
 import walletColor from "../utils/walletColor";
+import DetailHeader from "../components/DetailHeader";
 
 export default function WalletDetail() {
   //   dapatkan id kategori
@@ -66,7 +67,7 @@ export default function WalletDetail() {
 
   return (
     <DashboardLayout title={`Detail kantong`}>
-      <div className="text-center py-16 space-y-1">
+      <DetailHeader>
         {/* judul */}
         <div className={`flex items-center justify-center gap-1`}>
           {wallet.icon} {wallet.name}
@@ -97,36 +98,46 @@ export default function WalletDetail() {
         </div>
 
         {/* tambah transaksi */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 gap-2">
           <Link
-            to={"/transaksi/tambah"}
+            to={"/transactions/new"}
             title="Tambah transaksi baru"
-            className={`w-fit flex items-center justify-center gap-2 rounded-xl p-3 text-sm border-2 border-dashed hover:bg-custom-green/20 text-neutral-500 border-neutral-500 hover:text-neutral-800 hover:border-neutral-800 cursor-pointer hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out`}
+            className={`w-fit flex items-center justify-center gap-2 rounded-xl p-3 hover:px-5 text-sm border-2 border-dashed hover:bg-custom-green/20 text-neutral-500 border-neutral-500 hover:text-neutral-800 hover:border-neutral-800 cursor-pointer hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out`}
           >
             <Plus size={20} />
             <div className="">Tambah transaksi</div>
           </Link>
+          <Link
+            to={`/wallets/${wallet.id}/edit`}
+            title="Edit kantong"
+            className={`group w-fit flex items-center justify-center gap-2 rounded-xl p-3 hover:px-5 text-sm border-2 border-dashed hover:bg-custom-green/20 text-neutral-500 border-neutral-500 hover:text-neutral-800 hover:border-neutral-800 cursor-pointer hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out`}
+          >
+            <Pencil size={20} />
+            <div className="hidden group-hover:block">Edit</div>
+          </Link>
+          <Link
+            to={"/transactions/new"}
+            title="Hapus kantong"
+            className={`group w-fit flex items-center justify-center gap-2 rounded-xl p-3 hover:px-5 text-sm border-2 border-dashed hover:bg-custom-red/40 text-neutral-500 border-neutral-500 hover:text-neutral-800 hover:border-neutral-800 cursor-pointer hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out`}
+          >
+            <Trash size={20} />
+            <div className="hidden group-hover:block">Hapus</div>
+          </Link>
         </div>
-      </div>
+      </DetailHeader>
 
-      <div className="grid grid-cols-4 gap-3">
-        {/* detail kategori */}
-        {!loading && (
+      {!loading && wallet.transaction.length !== 0 && (
+        <div className="grid grid-cols-4 gap-3">
+          {/* detail kategori */}
           <div className="sticky top-5 space-y-2 h-fit">
             <div className="">Detail</div>
             <div
               className={`${walletColor(wallet.color).background} rounded-xl w-full p-5 space-y-3`}
             >
-              {/* <div className="w-fit rounded-xl text-4xl">{wallet.icon}</div>
-              <h1>{wallet.name}</h1> */}
               <div>
                 <div className="text-sm text-neutral-600">Periode</div>
                 <div className="">{periode}</div>
               </div>
-              {/* <div>
-              <div className="text-sm text-neutral-600">Jumlah transaksi</div>
-              <div className="">{wallet.transaction_count} kali</div>
-            </div> */}
               <div>
                 <div className="text-sm text-neutral-600">Total transaksi</div>
                 <div className="">IDR {moneyFormat(wallet.total)}</div>
@@ -153,85 +164,66 @@ export default function WalletDetail() {
                 <div className="text-sm text-neutral-600">Dibuat pada</div>
                 <div className="">{dateFormat(wallet.created_at)}</div>
               </div>
-
-              {/* opsi */}
-              {/* <div
-              className={`rounded-full p-3 ${walletColor(wallet.color).background} ${walletColor(wallet.color).hover} flex justify-center items-center gap-1 w-full`}
-            >
-              <CircleEllipsis size={20} />
-              <div className="">Menu</div>
-            </div> */}
-            </div>
-            {/* aksi */}
-            <div className={`flex gap-1 rounded-b-2xl`}>
-              <div
-                className={`w-[60%] bg-custom-green/10 hover:bg-custom-green/20 p-4 rounded-xl flex items-center justify-center gap-1 hover:rounded-4xl transition-all ease-in-out cursor-pointer`}
-              >
-                <Pencil /> Edit
-              </div>
-              <div
-                className={`w-[40%] hover:w-full bg-custom-red/20 hover:bg-custom-red/40 p-4 rounded-xl flex items-center justify-center gap-1 hover:rounded-4xl transition-all ease-in-out cursor-pointer`}
-              >
-                <Trash /> Hapus
-              </div>
             </div>
           </div>
-        )}
-        {/* loading */}
-        {loading && (
-          <div className="bg-custom-red/10 rounded-xl w-full h-fit sticky top-5 p-5 space-y-3">
-            <Skeleton
-              height={"h-12"}
-              width={"aspect-square"}
-              color={"bg-custom-red/20"}
-            />
-            <Skeleton
-              height={"h-12"}
-              width={"w-full"}
-              color={"bg-custom-red/20"}
-            />
-            {Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className="space-y-1">
-                <Skeleton
-                  height={"h-4"}
-                  width={"w-1/2"}
-                  color={"bg-custom-red/20"}
-                />
-                <Skeleton
-                  height={"h-6"}
-                  width={"w-full"}
-                  color={"bg-custom-red/20"}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* daftar transaksi */}
-        <div className="col-span-3 space-y-2">
-          <div className="">Daftar transaksi</div>
-          {/* daftar */}
-          {wallet.transaction.map((transaction) => (
-            <TransactionItem
-              key={transaction.id}
-              id={transaction.id}
-              icon={
-                transaction.direction == "in" ? "ArrowDownLeft" : "ArrowUpRight"
-              }
-              name={transaction.category.name}
-              date={dateFormat(transaction.date, "short-date")}
-              desc={transaction.note}
-              amount={`IDR ${transactionDirection(transaction.direction)}${moneyFormat(transaction.amount)}`}
-              transactionDirection={transaction.direction}
-            />
-          ))}
           {/* loading */}
-          {loading &&
-            Array.from({ length: 10 }).map((_, i) => (
-              <Skeleton key={i} width={"w-full"} height={"h-12"} />
+          {loading && (
+            <div className="bg-custom-red/10 rounded-xl w-full h-fit sticky top-5 p-5 space-y-3">
+              <Skeleton
+                height={"h-12"}
+                width={"aspect-square"}
+                color={"bg-custom-red/20"}
+              />
+              <Skeleton
+                height={"h-12"}
+                width={"w-full"}
+                color={"bg-custom-red/20"}
+              />
+              {Array.from({ length: 7 }).map((_, i) => (
+                <div key={i} className="space-y-1">
+                  <Skeleton
+                    height={"h-4"}
+                    width={"w-1/2"}
+                    color={"bg-custom-red/20"}
+                  />
+                  <Skeleton
+                    height={"h-6"}
+                    width={"w-full"}
+                    color={"bg-custom-red/20"}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* daftar transaksi */}
+          <div className="col-span-3 space-y-2">
+            <div className="">Daftar transaksi</div>
+            {/* daftar */}
+            {wallet.transaction.map((transaction) => (
+              <TransactionItem
+                key={transaction.id}
+                id={transaction.id}
+                icon={
+                  transaction.direction == "in"
+                    ? "ArrowDownLeft"
+                    : "ArrowUpRight"
+                }
+                name={transaction.category.name}
+                date={dateFormat(transaction.date, "short-date")}
+                desc={transaction.note}
+                amount={`IDR ${transactionDirection(transaction.direction)}${moneyFormat(transaction.amount)}`}
+                transactionDirection={transaction.direction}
+              />
             ))}
+            {/* loading */}
+            {loading &&
+              Array.from({ length: 10 }).map((_, i) => (
+                <Skeleton key={i} width={"w-full"} height={"h-12"} />
+              ))}
+          </div>
         </div>
-      </div>
+      )}
     </DashboardLayout>
   );
 }

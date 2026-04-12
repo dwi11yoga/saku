@@ -23,14 +23,18 @@ Route::get('/transaction/{id}', [TransactionController::class, 'transactionDetai
 Route::get('/current-balance', [WalletController::class, 'currentBalance']);
 // daftar wallet
 Route::get('/wallets', [WalletController::class, 'getAllWallet']);
+// tambah kantong
+Route::post('/wallet', [WalletController::class, 'create']);
+// detail kantong
+Route::get('/wallet/{id}', [WalletController::class, 'walletDetail']);
+// simpan edit kantong
+Route::put('/wallet/{id}', [WalletController::class, 'update']);
 
 // daftar kategori
 Route::get('/categories', [CategoryController::class, 'getCategories']);
 // tambah kategori
 Route::post('/categories', [CategoryController::class, 'create']);
+// simpan edit kategori
+Route::put('/categories/{id}', [CategoryController::class, 'update']);
 // detail kategori
 Route::get('/categories/{id}', [CategoryController::class, 'categoryDetail']);
-// tambah kantong
-Route::post('/wallet', [WalletController::class, 'create']);
-// detail kantong
-Route::get('/wallet/{id}', [WalletController::class, 'walletDetail']);

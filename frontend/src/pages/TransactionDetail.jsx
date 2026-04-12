@@ -7,6 +7,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { dateFormat, moneyFormat, transactionDirection } from "../utils/format";
 import Insight from "../components/transaction-detail/insight";
 import TransactionDetailSkeleton from "../skeleton/TransactionDetailSkeleton";
+import DetailHeader from "../components/DetailHeader";
 
 export default function TransactionDetail() {
   // dapatkan id transaksi
@@ -39,34 +40,29 @@ export default function TransactionDetail() {
 
   return (
     <DashboardLayout title={`Detail transaksi`}>
-      {/* info utama */}
-      <div className="flex justify-center items-center gap-5 py-10">
-        {/* icon */}
-        <div
-          className={`${transaction.direction === "in" ? "text-custom-green bg-custom-green/10" : "text-red-600 bg-custom-red/20"} w-fit h-fit`}
-        >
-          <TransactionIcon size={62} />
-        </div>
-
-        <div className="">
-          {/* kategori */}
-          <Link
-            to={`/kategori/${transaction.category?.id}`}
-            className="text-neutral-600 hover:text-neutral-800 flex gap-1 group items-center"
+      {/* header */}
+      <DetailHeader>
+        {/* jumlah uang */}
+        <div className="text-5xl">
+          IDR{" "}
+          <span
+            className={`font-semibold ${transaction.direction === "in" ? "text-custom-green" : "text-red-500"}`}
           >
-            {transaction.category?.name}
-            <LucideIcons.ArrowRight
-              className="group-hover:block hidden"
-              size={18}
-            />
-          </Link>
-          {/* jumlah uang */}
-          <div className="text-5xl font-semibold">
             {transactionDirection(transaction?.direction)}
             {moneyFormat(transaction.amount ?? 0)}
-          </div>
+          </span>
         </div>
-      </div>
+        {/* kategori */}
+        <div className="">
+          {transaction.category?.icon} Untuk{" "}
+          <Link
+            to={`/categories/${transaction.category?.id}`}
+            className="text-neutral-600 hover:text-neutral-800 hover:underline decoration-4 underline-offset-4"
+          >
+            {transaction.category?.name.toLowerCase()}
+          </Link>
+        </div>
+      </DetailHeader>
       <div className="grid grid-cols-4 gap-3">
         {/* insight */}
         <div className="">
@@ -105,39 +101,11 @@ export default function TransactionDetail() {
               Kantong
             </div>
             <Link
-              to={`/kantong/${transaction.wallet?.id}`}
+              to={`/wallets/${transaction.wallet?.id}`}
               className={`${transaction.direction === "in" ? "hover:bg-custom-green/10" : "hover:bg-custom-red/20"} rounded-full group-hover:px-2`}
             >
               {transaction.wallet?.name}
             </Link>
-          </div>
-          {/* lokasi */}
-          <div
-            className={`${transaction.direction === "in" ? "bg-custom-green/5 hover:bg-custom-green/10" : "bg-custom-red/10 hover:bg-custom-red/20"} group p-5 hover:px-7 rounded-xl hover:rounded-[3rem] transition-all ease-in-out`}
-          >
-            <div className="text-sm text-neutral-600 flex gap-1">
-              <LucideIcons.Map size={18} />
-              Lokasi
-            </div>
-            {!transaction.location ? '—' : (
-              <div className="flex items-center">
-              <Link
-                to={`/lokasi/${transaction.location}`}
-                className={`${transaction.direction === "in" ? "hover:bg-custom-green/10" : "hover:bg-custom-red/20"} rounded-full group-hover:px-2`}
-              >
-                {transaction.location}
-              </Link>
-              <Link
-                to={`https://www.google.com/maps/search/${transaction.location}`}
-                target="_blank"
-                title="Lihat di google maps"
-                className={`group-hover:opacity-100 opacity-0 flex items-center w-fit transition-all ease-in-out ${transaction.direction === "in" ? "hover:bg-custom-green/10" : "hover:bg-custom-red/20"} rounded-full group-hover:px-2 text-sm`}
-              >
-                Google maps
-                <LucideIcons.ArrowUpRight size={20} />
-              </Link>
-            </div>
-            )}
           </div>
           {/* tanggal */}
           <div
@@ -158,6 +126,36 @@ export default function TransactionDetail() {
               Waktu
             </div>
             <div className="">{dateFormat(transaction.date, "time")}</div>
+          </div>
+          {/* lokasi */}
+          <div
+            className={`${transaction.direction === "in" ? "bg-custom-green/5 hover:bg-custom-green/10" : "bg-custom-red/10 hover:bg-custom-red/20"} group p-5 hover:px-7 rounded-xl hover:rounded-[3rem] transition-all ease-in-out`}
+          >
+            <div className="text-sm text-neutral-600 flex gap-1">
+              <LucideIcons.Map size={18} />
+              Lokasi
+            </div>
+            {!transaction.location ? (
+              "—"
+            ) : (
+              <div className="flex items-center">
+                <Link
+                  to={`/locations/${transaction.location}`}
+                  className={`${transaction.direction === "in" ? "hover:bg-custom-green/10" : "hover:bg-custom-red/20"} rounded-full group-hover:px-2`}
+                >
+                  {transaction.location}
+                </Link>
+                <Link
+                  to={`https://www.google.com/maps/search/${transaction.location}`}
+                  target="_blank"
+                  title="Lihat di google maps"
+                  className={`group-hover:opacity-100 opacity-0 flex items-center w-fit transition-all ease-in-out ${transaction.direction === "in" ? "hover:bg-custom-green/10" : "hover:bg-custom-red/20"} rounded-full group-hover:px-2 text-sm`}
+                >
+                  Google maps
+                  <LucideIcons.ArrowUpRight size={20} />
+                </Link>
+              </div>
+            )}
           </div>
           {/* note */}
           <div

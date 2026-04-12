@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import axios from "../utils/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -6,8 +6,12 @@ import InputValidation from "../components/InputValidation";
 import FlashMessage from "../components/FlashMessage";
 import walletColor from "../utils/walletColor";
 import { Button, Emoji, Input, TextArea } from "../components/Form";
+import { useParams } from "react-router-dom";
+import ErrorPage from "./ErrorPage";
+import { Save } from "lucide-react";
 
-export default function AddWallet() {
+export default function EditWallet() {
+  const title = "Edit kantong";
   // simpan data form
   const [form, setForm] = useState({
     user_id: 1,
@@ -17,6 +21,51 @@ export default function AddWallet() {
     color: "green",
     note: "",
   });
+
+  // dapatkan data kantong
+  const wallet_id = useParams().id;
+  const [notFound, setNotFound] = useState(null);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(`/wallet/${wallet_id}`)
+      .then((res) => {
+        // jika data bukan milik pengguna
+        if (res.data.user_id !== 1) {
+          setNotFound({
+            status: 403,
+            message:
+              "Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.",
+          });
+          return;
+        }
+
+        // simpan ke var. form
+        const data = res.data;
+        const newFormData = {
+          user_id: data.user_id,
+          emoji: data.icon,
+          name: data.name,
+          initial_balance: data.initial_balance,
+          color: data.color,
+          note: data.note,
+        };
+        setForm(newFormData);
+      })
+      .catch((err) => {
+        setNotFound({
+          status: err.response?.status,
+          message:
+            err.response?.status == 404
+              ? "Kantong tidak ditemukan."
+              : err.response?.data.message,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   // menyimpan validasi error
   const [errors, setErrors] = useState({});
@@ -87,7 +136,7 @@ export default function AddWallet() {
       setSaving(true);
 
       // simpan
-      const res = await axios.post("/wallet", {
+      const res = await axios.put(`/wallet/${wallet_id}`, {
         user_id: form.user_id,
         icon: form.emoji,
         color: form.color,
@@ -98,26 +147,17 @@ export default function AddWallet() {
       res.status === 200 &&
         setFlash({
           type: "success",
-          message: "Kantong baru telah berhasil dibuat.",
+          message: "Kantong telah berhasil diperbarui.",
+          url: { link: `/wallets/${wallet_id}`, text: "Lihat" },
         });
       console.log(res.data);
     } catch (error) {
       const status = error.response.status;
       const message = error.response.data.message;
-      switch (status) {
-        case 422:
-          setFlash({
-            type: "failed",
-            message: `Gagal menyimpan data: ${message}`,
-          });
-          break;
-        default:
-          setFlash({
-            type: "failed",
-            message: `Gagal menyimpan data: ${message}.`,
-          });
-          break;
-      }
+      setFlash({
+        type: "failed",
+        message: `Gagal memperbarui data: ${message}`,
+      });
     } finally {
       setSaving(false);
       setTimeout(() => setFlash(null), 3000); // buat flashmasage berdurasi 3 detik (3000 ms)
@@ -134,8 +174,18 @@ export default function AddWallet() {
     { id: "brown", label: "Coklat" },
   ];
 
+  // jika data tidak ditemukan
+  if (notFound)
+    return (
+      <ErrorPage
+        title={title}
+        status={notFound.status}
+        message={notFound.message}
+      />
+    );
+
   return (
-    <DashboardLayout title={"Tambah kantong"}>
+    <DashboardLayout title={title}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -216,19 +266,12 @@ export default function AddWallet() {
           <div className=""></div>
 
           {/* tombol submit */}
-          <Button text={"Tambah kantong"} isSaving={saving} />
+          <Button text={"Edit kantong"} icon={Save} isSaving={saving} />
         </div>
       </form>
 
       {/* flash massage */}
-      {flash && (
-        <FlashMessage
-          flash={flash}
-          url={
-            flash.type === "success" ? { link: "/wallets", text: "Lihat" } : ""
-          }
-        />
-      )}
+      {flash && <FlashMessage flash={flash} />}
     </DashboardLayout>
   );
 }

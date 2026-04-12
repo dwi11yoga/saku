@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Wallet;
+use ErrorException;
 use Illuminate\Http\Request;
 
 class WalletController extends Controller
@@ -34,6 +35,38 @@ class WalletController extends Controller
             'updated_at' => now()
         ]);
         return response()->json($request->all());
+    }
+    // update wallet
+    public function update(Request $request)
+    {
+        // validasi
+        $request->validate([
+            'user_id' => 'required',
+            'icon' => 'required',
+            'color' => 'required',
+            'name' => 'required|string|min:3|max:50',
+            'initial_balance' => 'required|int',
+            'note' => 'nullable|max:100'
+        ]);
+
+        // validasi apakah pengguna == pemilik wallet
+        // BELOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM
+
+        try {
+            $savedData = Wallet::find($request->id)->update([
+                'name' => $request->name,
+                'icon' => $request->icon,
+                'color' => $request->color,
+                'balance' => $request->initial_balance,
+                'initial_balance' => $request->initial_balance,
+                'note' => $request->note,
+                'updated_at' => now()
+            ]);
+        } catch (ErrorException $e) {
+            return response()->json($e->getMessage(), $e->getCode());
+        }
+
+        return response()->json($savedData, 200);
     }
     // dapatkan balance saat ini
     public function currentBalance()
@@ -77,12 +110,11 @@ class WalletController extends Controller
     // dapatkan detail wallet / kantong
     public function walletDetail($id)
     {
-        $data = Wallet::where('id', $id)
-            ->with(['transaction' => function ($query) {
-                $query->where('user_id', 1)
-                    ->with('category')
-                    ->orderByDesc('date');
-            }])
+        $data = Wallet::with(['transaction' => function ($query) {
+            $query->where('user_id', 1)
+                ->with('category')
+                ->orderByDesc('date');
+        }])
             ->withCount(['transaction as debit_count' => function ($query) {
                 $query->where('user_id', 1)
                     ->where('direction', 'in');
@@ -91,7 +123,7 @@ class WalletController extends Controller
                 $query->where('user_id', 1)
                     ->where('direction', 'out');
             }])
-            ->first();
+            ->findOrFail($id);
 
         // dapatkan total transaksi
         $data->transaction_count = $data->debit_count + $data->credit_count;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import axios from "../utils/axios";
+import { useSearchParams, Link } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import TransactionItem from "../components/TransactionItem";
 import {
@@ -9,10 +9,12 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleX,
+  Plus,
 } from "lucide-react";
 import { dateFormat, moneyFormat, transactionDirection } from "../utils/format";
 import Skeleton from "../components/Skeleton";
 import ErrorPage from "./ErrorPage";
+import DetailHeader from "../components/DetailHeader";
 
 export default function Transaction() {
   // search param
@@ -28,10 +30,11 @@ export default function Transaction() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [failLoadData, setFailLoadData] = useState(false);
+  var [spending, setSpending] = useState(0);
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/transactions", {
+      .get("/transactions", {
         params: {
           groupby: true,
           month: month,
@@ -45,18 +48,25 @@ export default function Transaction() {
 
         // kelompokkan transaksi berdasarkan tanggal
         const data = {};
+        let total = 0; // catat total transaksi
         res.data.map((transaction) => {
           const date = dateFormat(transaction.date);
           if (!data[date]) {
             data[date] = []; // inisialisasi array jika belum ada
           }
           data[date].push(transaction);
+
+          // hitung total spending bulan ini
+          if (transaction.direction === "in") {
+            total += Number(transaction.amount);
+          } else {
+            total -= Number(transaction.amount);
+          }
         });
-
-        console.log(data);
-
         // set data transaksi
         setTransactions(data);
+        // set total transaksi
+        setSpending(total);
       })
       .catch((err) => {
         setFailLoadData({
@@ -117,9 +127,37 @@ export default function Transaction() {
   }
 
   return (
-    <DashboardLayout title={"Transaksi"}>
-      {/* tab */}
+    <DashboardLayout title={"Riwayat transaksi"}>
+      <DetailHeader>
+        {/* judul */}
+        <div>
+          Bulan ini {spending > 0 ? "profit" : "defisit"}
+        </div>
+        
+        {/* total pengeluaran */}
+        <div className="text-5xl">
+          IDR{" "}
+          <span
+            className={`font-semibold ${spending > 1 ? "text-custom-green" : "text-red-500"}`}
+          >
+            {moneyFormat(spending ?? 0)}
+          </span>
+        </div>
+        
+        {/* tambah transaksi */}
+        <div className="flex justify-center mt-8">
+          <Link
+            to={"/transactions/new"}
+            title="Tambah transaksi baru"
+            className={`w-fit flex items-center justify-center gap-2 rounded-xl p-3 text-sm border-2 border-dashed hover:bg-custom-green/20 text-neutral-500 border-neutral-500 hover:text-neutral-800 hover:border-neutral-800 cursor-pointer hover:rounded-[3rem] focus:rounded-[3rem] transition-all ease-in-out`}
+          >
+            <Plus size={20} />
+            <div className="">Tambah transaksi</div>
+          </Link>
+        </div>
+      </DetailHeader>
 
+      {/* tab */}
       {/* pindah bulan & tanggal */}
       <div className="flex py-5 divide-x divide-neutral-200">
         {/* bulan */}
@@ -240,6 +278,7 @@ export default function Transaction() {
                         id={item.id}
                         name={item.category.name}
                         icon={item.category.icon}
+                        iconType={"emoji"}
                         amount={`IDR ${transactionDirection(item.direction)}${moneyFormat(item.amount)}`}
                         desc={item.note}
                         date={`pada ${dateFormat(item.date, "time")}`}

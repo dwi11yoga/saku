@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { z } from "zod";
+import { emoji, z } from "zod";
 import axios from "../utils/axios";
 import DashboardLayout from "../layouts/DashboardLayout";
 import FlashMessage from "../components/FlashMessage";
 import { Button, Emoji, Input, TextArea } from "../components/Form";
+import { useParams } from "react-router-dom";
+import { Save } from "lucide-react";
 
-export default function AddCategory() {
+export default function EditCategory() {
+  const title = "Edit kategori";
+  const { id } = useParams();
+
   // simpan data form
   const [form, setForm] = useState({
     user_id: 1,
@@ -13,6 +18,23 @@ export default function AddCategory() {
     emoji: "",
     note: "",
   });
+
+  // dapatkan data kategori
+  useEffect(() => {
+    axios.get(`/categories/${id}`).then((res) => {
+      const data = res.data;
+      const loadedData = {
+        user_id: form.user_id,
+        name: data.name,
+        emoji: data.icon,
+        note: data.note ?? "",
+      };
+      console.log(loadedData);
+
+      setForm(loadedData);
+    });
+  }, []);
+
   // simpan tampil/tidaknya icon picker
   const [showIconPicker, setShowIconPicker] = useState(false);
   // menyimpan validasi error
@@ -94,17 +116,20 @@ export default function AddCategory() {
       setSaving(true);
 
       // simpan
-      const res = await axios.post("/categories", {
-        name: form.name,
+      const res = await axios.put(`/categories/${id}`, {
         user_id: form.user_id,
+        name: form.name,
         icon: form.emoji,
         note: form.note,
       });
       res.status === 200 &&
         setFlash({
           type: "success",
-          message: "Kategori baru telah berhasil dibuat.",
-          url: { link: "/categories", text: "Lihat" },
+          message: "Kategori telah berhasil diedit",
+          url: {
+            link: `/categories/${id}`,
+            text: "Lihat",
+          },
         });
     } catch (error) {
       const status = error.response.status;
@@ -130,7 +155,7 @@ export default function AddCategory() {
   }
 
   return (
-    <DashboardLayout title={"Tambah kategori"}>
+    <DashboardLayout title={title}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -168,7 +193,7 @@ export default function AddCategory() {
           />
 
           {/* tombol submit */}
-          <Button text={"Tambah kategori"} isSaving={saving} />
+          <Button text={"Edit kategori"} icon={Save} isSaving={saving} />
         </div>
       </form>
 
